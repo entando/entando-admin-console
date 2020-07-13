@@ -1,15 +1,32 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
 
-<h1 class="page-title-container"><s:text name="title.detailPageTitle" />
-    <span class="pull-right">
-        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.help" />" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
-    </span>
-</h1>
-
-<div class="text-right">
-    <div class="form-group-separator">
+<div class="gird" fluid>
+    <div class="row">
+      <div class="col-xs-12">
+        <h2 class="page-title-container">
+          Entando Platform
+        </h2>
+        <h3>
+          About
+        </h3>
+        <section>
+          <p className="AboutPage__description">
+            Entando is a micro frontend platform that allows enterprises to build,
+            and reuse applications built with micro frontends and microservices on Kubernetes.
+          </p>
+        </section>
+        <h2 class="page-title-container">
+        Version: 6.2
+        </h2>
+        <section>
+          <p className="AboutPage__description">
+          The documentation helps you learn about Entando Platform
+          and start exploring its features.
+          To get started using Entando Platform, visit
+            <a href="https://dev.entando.org/" target="_blank" rel="noopener noreferrer"> dev.entando.org</a>
+          </p>
+        </section>
+      </div>
     </div>
 </div>
-<br>
-

@@ -1,15 +1,27 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
 
-<h1 class="page-title-container"><s:text name="title.detailPageTitle" />
-    <span class="pull-right">
-        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.help" />" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
-    </span>
-</h1>
-
-<div class="text-right">
-    <div class="form-group-separator">
+<div class="grid" fluid>
+    <div class="row">
+      <div class="col-xs-12">
+        <h2 class="page-title-container">
+            License
+        </h2>
+        <section>
+          <p style="font-size: 13px">
+            The Entando platform is 100% open source and as a whole is licensed under the LGPL V3.0.
+            <br />
+            <br />
+            A free commercial open source license is available for Entando platform and the Entando Component Repository for customers with Gold and Platinum subscriptions. With this license, you can freely extend or modify Entando without requiring the contribution of confidential IP back to the open source community. The Subscription entitles you to receive support services, intended as maintenance and warranty of the software (bug fixing), for all the products and components subscribed throughout the period of the contract.
+            <br />
+            <br />
+            LGPL V 3.0 licence
+            <br />
+            <a href="https://www.gnu.org/licenses/lgpl-3.0.en.html" target="_blank" rel="noopener noreferrer">https://www.gnu.org/licenses/lgpl-3.0.en.html</a>
+          </p>
+        </section>
+        </div>
     </div>
 </div>
-<br>
+
 
