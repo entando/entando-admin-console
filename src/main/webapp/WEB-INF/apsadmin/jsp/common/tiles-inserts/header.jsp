@@ -50,8 +50,8 @@
                 <span class="caret"></span>
             </a>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                <li><a href="#">About</a></li>
-                <li><a href="#">Licence</a></li>
+                <li><a href="<s:url action="viewAbout" />"><s:text name="about.title" /></a></li>
+                <li><a href="<s:url action="viewLicense" namespace="/do" />"><s:text name="license.title" /></a></li>
             </ul>
         </li>
         <li id="userDropdown" class="dropdown">

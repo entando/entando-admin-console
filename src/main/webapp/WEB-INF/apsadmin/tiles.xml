@@ -588,4 +588,14 @@
 	</definition>
     <!-- ********* FINE Area Gestione DATA UX ********* -->
 
+    <!-- Static Pages -->
+    <definition extends="layout.default" name="static.about.entando">
+		<put-attribute name="title" value="about.title" />
+		<put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/aboutPage.jsp" />
+	</definition>
+    <definition extends="layout.default" name="static.license.entando">
+		<put-attribute name="title" value="license.title" />
+		<put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/licensePage.jsp" />
+	</definition>
+
 </tiles-definitions>

@@ -49,6 +49,19 @@
 			<result type="tiles">admin.Common.Password.changingConfirm</result>
 			<interceptor-ref name="entandoFreeValidationStack"></interceptor-ref>
 		</action>
+
+		<!-- <action name="viewAbout" class="baseCommonAction">
+			<result name="input">/WEB-INF/apsadmin/jsp/common/about.jsp</result>
+			<result type="tiles">/WEB-INF/apsadmin/jsp/common/about.jsp</result>
+		</action>
+		<action name="viewLicense" class="baseCommonAction">
+			<result name="input">/WEB-INF/apsadmin/jsp/common/license.jsp</result>
+			<result type="tiles">/WEB-INF/apsadmin/jsp/common/license.jsp</result>
+		</action> -->
+
+		<action name="viewAbout">
+			<result>WEB-INF/apsadmin/jsp/common/aboutPage.jsp</result>
+		</action>
 	
 	</package>
 	
