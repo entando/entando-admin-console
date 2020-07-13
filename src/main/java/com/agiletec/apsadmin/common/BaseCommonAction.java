@@ -46,21 +46,6 @@ public class BaseCommonAction extends BaseAction {
 			throw new RuntimeException("Error extracting user", e);
 		}
 	}
-		
-	public String viewAbout() {
-		return SUCCESS;
-	}
-
-	public String viewLicense() {
-		return SUCCESS;
-	}
-	public String doViewAbout() {
-		return SUCCESS;
-	}
-
-	public String doViewLicense() {
-		return SUCCESS;
-	}
 	
 	public String editPassword() {
 		return SUCCESS;

@@ -590,6 +590,8 @@
 	</definition>
     <!-- ********* FINE Area Gestione DATA UX ********* -->
 
+    <!-- Static pages -->
+
     <definition extends="layout.default" name="static.about.entando">
 		<put-attribute name="title" value="about.title" />
 		<put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/aboutPage.jsp" />

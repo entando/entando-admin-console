@@ -78,13 +78,6 @@ public class DispatchAction extends BaseAction {
         return SUCCESS;
     }
 
-    public String doViewAbout() {
-        return SUCCESS;
-    }
-    public String doViewLicense() {
-        return SUCCESS;
-    }
-
     /**
      * Esegue l'operazione di richiesta logout utente.
      *
