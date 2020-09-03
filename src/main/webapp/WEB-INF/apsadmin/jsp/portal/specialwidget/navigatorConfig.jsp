@@ -231,6 +231,12 @@
                     </div>
                 </fieldset>
 
+                <script>
+                    $('.btn-with-form-control select').click(function (e) {
+                        e.stopPropagation();
+                    });
+                </script>
+
                 <!-- Operator -->
                 <fieldset class="col-xs-12 no-padding">
                     <legend><s:text name="widget.configNavigator.operator" /></legend>
