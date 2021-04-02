@@ -10,10 +10,12 @@
     <c:set var="currentUsernameVar" value="${sessionScope.currentUser.profile.displayName}" />
 </c:if>
 
+<s:set var="langstr">[<s:iterator value="langs" status="langstatus">{"code": "<s:property value="code" />", "descr": "<s:property value="descr" />"}<s:if test="!#langstatus.last">,</s:if></s:iterator>]</s:set>
+
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/css/pages/previewPage.css"/>
-    <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/preview-components/static/css/main.629865d4.chunk.css"/>
+    <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/preview-components/static/css/main.159613d7.chunk.css"/>
     <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/preview-components/static/css/2.416eeee3.chunk.css"/>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -24,11 +26,12 @@
             token: '<s:property value="token" />',
             pageCode: '<s:property value="pageCode" />',
             previewWidth: '<s:property value="#currentSize.width" />',
-            previewHeight: '<s:property value="#currentSize.height" />'
+            previewHeight: '<s:property value="#currentSize.height" />',
+            languages: '<s:property value="langstr" />',
         };
     </script>
-    <script src="<wp:resourceURL />administration/preview-components/static/js/2.01347d7d.chunk.js"></script>
-    <script src="<wp:resourceURL />administration/preview-components/static/js/main.ddbb2e71.chunk.js"></script>
+    <script src="<wp:resourceURL />administration/preview-components/static/js/2.aa6b57bc.chunk.js"></script>
+    <script src="<wp:resourceURL />administration/preview-components/static/js/main.85ba0392.chunk.js"></script>
     <script src="<wp:resourceURL />administration/preview-components/static/js/runtime-main.4b714230.js"></script>
     <script src="<wp:resourceURL />administration/js/pages/previewPage.js"></script>
 </head>
@@ -39,6 +42,8 @@
         resolution-width="<s:property value="#currentSize.width" />"
         resolution-height="<s:property value="#currentSize.height" />"
         user-logged="${currentUsernameVar}"
+        languages="<s:property value="langstr" escapeHtml="true" />"
+        current-lang="<s:property value="lang" />"
     ></preview-control-bar>
     <div class="main-container">
         <iframe id="previewFrame">
