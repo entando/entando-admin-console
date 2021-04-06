@@ -15,7 +15,7 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/css/pages/previewPage.css"/>
-    <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/preview-components/static/css/main.159613d7.chunk.css"/>
+    <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/preview-components/static/css/main.d69a348f.chunk.css"/>
     <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/preview-components/static/css/2.416eeee3.chunk.css"/>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -30,8 +30,8 @@
             languages: '<s:property value="langstr" />',
         };
     </script>
-    <script src="<wp:resourceURL />administration/preview-components/static/js/2.aa6b57bc.chunk.js"></script>
-    <script src="<wp:resourceURL />administration/preview-components/static/js/main.85ba0392.chunk.js"></script>
+    <script src="<wp:resourceURL />administration/preview-components/static/js/2.7e154929.chunk.js"></script>
+    <script src="<wp:resourceURL />administration/preview-components/static/js/main.7cc52bb1.chunk.js"></script>
     <script src="<wp:resourceURL />administration/preview-components/static/js/runtime-main.4b714230.js"></script>
     <script src="<wp:resourceURL />administration/js/pages/previewPage.js"></script>
 </head>
@@ -46,8 +46,11 @@
         current-lang="<s:property value="lang" />"
     ></preview-control-bar>
     <div class="main-container">
-        <iframe id="previewFrame">
-        </iframe>
+        <div class="preview-area">
+            <iframe id="previewFrame">
+            </iframe>
+        </div>
+        <preview-comments-bar></preview-comments-bar>
     </div>
 </body>
 </html>

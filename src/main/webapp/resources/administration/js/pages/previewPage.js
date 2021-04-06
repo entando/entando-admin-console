@@ -13,7 +13,16 @@ const sizeOptions = {
 	}
 };
 
-var previewFrame;
+var previewFrame, mainContainer, controlBar, commentBar, commentsOpened = false;
+
+const toggleCommentsBar = (open = false) => {
+	commentsOpened = open;
+	if (commentsOpened) {
+		mainContainer.classList.add('show-comments');
+	} else {
+		mainContainer.classList.remove('show-comments');
+	}
+};
 
 const handleChangePreviewSize = (ev) => {
 	const { width, height } = ev && ev.detail || {
@@ -22,6 +31,11 @@ const handleChangePreviewSize = (ev) => {
 	};
 	previewFrame.setAttribute('width', width.replace(/px/i, ''));
 	previewFrame.setAttribute('height', height.replace(/px/i, ''));
+};
+
+const handleCloseComments = () => {
+	toggleCommentsBar(false);
+	controlBar.setAttribute('comments-opened', 'false');
 };
 
 const handleChangeIframeUrl = (ev) => {
@@ -35,9 +49,14 @@ const handleChangeIframeUrl = (ev) => {
 
 const pageReady = () => {
 	previewFrame = document.getElementById('previewFrame');
-	const controlBar = document.getElementById('controlBar');
+	mainContainer = document.querySelector('.main-container');
+	controlBar = document.getElementById('controlBar');
+	commentBar = document.querySelector('preview-comments-bar');
 	controlBar.addEventListener(PreviewControlBarEvent.RESOLUTION_CHANGE, handleChangePreviewSize);
 	controlBar.addEventListener(PreviewControlBarEvent.CHANGE_LANGUAGE, handleChangeIframeUrl);
+	controlBar.addEventListener(PreviewControlBarEvent.COMMENT_TOGGLE, ({ detail }) => toggleCommentsBar(detail));
+
+	commentBar.addEventListener(PreviewCommentsBarEvent.COMMENT_CLOSE, handleCloseComments);
 	handleChangeIframeUrl();
 	handleChangePreviewSize();
 }

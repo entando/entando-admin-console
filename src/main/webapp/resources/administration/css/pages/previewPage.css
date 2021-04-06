@@ -6,9 +6,24 @@ html, body {
 
 .main-container {
     text-align: center;
+    display: flex;
 }
 
 #previewFrame {
     background: #fff;
     max-height: calc(100vh - 50px);
+}
+
+.preview-area {
+    flex: 1;
+}
+
+.main-container preview-comments-bar {
+    width: 0;
+    transition: width .1s;
+    overflow: hidden;
+}
+
+.main-container.show-comments preview-comments-bar {
+    width: 287px;
 }
