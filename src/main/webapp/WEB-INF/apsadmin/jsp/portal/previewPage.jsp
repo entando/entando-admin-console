@@ -10,6 +10,9 @@
     <c:set var="currentUsernameVar" value="${sessionScope.currentUser.profile.displayName}" />
 </c:if>
 
+<wp:ifauthorized permission="reviewer" var="hasReviewPermission" />
+<s:set var="hasReviewPermission" value="#attr.hasReviewPermission" />
+
 <s:set var="langstr">[<s:iterator value="langs" status="langstatus">{"code": "<s:property value="code" />", "descr": "<s:property value="descr" />"}<s:if test="!#langstatus.last">,</s:if></s:iterator>]</s:set>
 
 <html>
@@ -30,8 +33,8 @@
             languages: '<s:property value="langstr" />',
         };
     </script>
-    <script src="<wp:resourceURL />administration/preview-components/static/js/2.7e154929.chunk.js"></script>
-    <script src="<wp:resourceURL />administration/preview-components/static/js/main.7cc52bb1.chunk.js"></script>
+    <script src="<wp:resourceURL />administration/preview-components/static/js/2.54bba170.chunk.js"></script>
+    <script src="<wp:resourceURL />administration/preview-components/static/js/main.2bb14483.chunk.js"></script>
     <script src="<wp:resourceURL />administration/preview-components/static/js/runtime-main.4b714230.js"></script>
     <script src="<wp:resourceURL />administration/js/pages/previewPage.js"></script>
 </head>
@@ -44,13 +47,18 @@
         user-logged="${currentUsernameVar}"
         languages="<s:property value="langstr" escapeHtml="true" />"
         current-lang="<s:property value="lang" />"
+        locale="<s:property value="lang" />"
+        has-permission-review="${hasReviewPermission}"
     ></preview-control-bar>
     <div class="main-container">
         <div class="preview-area">
             <iframe id="previewFrame">
             </iframe>
         </div>
-        <preview-comments-bar></preview-comments-bar>
+        <preview-comments-bar
+            locale="<s:property value="lang" />"
+            has-permission-review="${hasReviewPermission}"
+        ></preview-comments-bar>
     </div>
 </body>
 </html>
