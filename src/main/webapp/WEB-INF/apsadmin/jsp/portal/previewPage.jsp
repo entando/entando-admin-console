@@ -1,11 +1,25 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 
 <s:set var="currentSize" value="screenSize" />
+
+<c:set var="currentUsernameVar" value="${sessionScope.currentUser}" />
+<s:set var="currentUsernameVar" value="#attr.currentUsernameVar" />
+<c:if test="${null != sessionScope.currentUser.profile}">
+    <c:set var="currentUsernameVar" value="${sessionScope.currentUser.profile.displayName}" />
+</c:if>
+
+<wp:ifauthorized permission="reviewer" var="hasReviewPermission" />
+<s:set var="hasReviewPermission" value="#attr.hasReviewPermission" />
+
+<s:set var="langstr">[<s:iterator value="langs" status="langstatus">{"code": "<s:property value="code" />", "descr": "<s:property value="descr" />"}<s:if test="!#langstatus.last">,</s:if></s:iterator>]</s:set>
+
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/patternfly/css/patternfly.min.css"/>
     <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/css/pages/previewPage.css"/>
+    <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/preview-components/static/css/main.d69a348f.chunk.css"/>
+    <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/preview-components/static/css/2.416eeee3.chunk.css"/>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script>
@@ -15,35 +29,36 @@
             token: '<s:property value="token" />',
             pageCode: '<s:property value="pageCode" />',
             previewWidth: '<s:property value="#currentSize.width" />',
-            previewHeight: '<s:property value="#currentSize.width" />'
+            previewHeight: '<s:property value="#currentSize.height" />',
+            languages: '<s:property value="langstr" />',
         };
     </script>
+    <script src="<wp:resourceURL />administration/preview-components/static/js/2.54bba170.chunk.js"></script>
+    <script src="<wp:resourceURL />administration/preview-components/static/js/main.2bb14483.chunk.js"></script>
+    <script src="<wp:resourceURL />administration/preview-components/static/js/runtime-main.4b714230.js"></script>
     <script src="<wp:resourceURL />administration/js/pages/previewPage.js"></script>
 </head>
 <body>
+    <preview-control-bar
+        id="controlBar"
+        app-builder-domain="<wp:info key="systemParam" paramName="appBuilderBaseURL" />"
+        resolution-width="<s:property value="#currentSize.width" />"
+        resolution-height="<s:property value="#currentSize.height" />"
+        user-logged="${currentUsernameVar}"
+        languages="<s:property value="langstr" escapeHtml="true" />"
+        current-lang="<s:property value="lang" />"
+        locale="<s:property value="lang" />"
+        has-permission-review="${hasReviewPermission}"
+    ></preview-control-bar>
     <div class="main-container">
-        <iframe id="previewFrame">
-        </iframe>
-    </div>
-    <div class="bottom-bar">
-        <label for="preview-mode-select"><s:text name="previewPage.previewMode" /></label>
-        <select id="preview-mode-select" class="preview-mode-select">
-            <option value="desktop"><s:text name="previewPage.option.desktop" /></option>
-            <option value="tablet"><s:text name="previewPage.option.tablet" /></option>
-            <option value="smartphone"><s:text name="previewPage.option.smartphone" /></option>
-            <option value="custom"><s:text name="previewPage.option.custom" /></option>
-        </select>
-
-        <div class="custom-panel">
-            <input class="custom-width" onkeypress="return event.charCode >= 48 && event.charCode <= 57"/>
-            x
-            <input class="custom-height" onkeypress="return event.charCode >= 48 && event.charCode <= 57"/>
-            <button class="btn custom-size-btn"><s:text name="label.ok" /></button>
+        <div class="preview-area">
+            <iframe id="previewFrame">
+            </iframe>
         </div>
-        
-        <label for="preview-mode-lang"><s:text name="previewPage.lang" /></label>
-        <s:select  list="langs" id="preview-mode-lang" name="lang" listKey="code" listValue="descr"></s:select>
-        
+        <preview-comments-bar
+            locale="<s:property value="lang" />"
+            has-permission-review="${hasReviewPermission}"
+        ></preview-comments-bar>
     </div>
 </body>
 </html>
