@@ -1,97 +1,64 @@
-$(function () {
+const sizeOptions = {
+	desktop: {
+		width: '100%',
+		height: '100%'
+	},
+	tablet: {
+		width: '768px',
+		height: '1024px'
+	},
+	smartphone: {
+		width: '360px',
+		height: '640px'
+	}
+};
 
+var previewFrame, mainContainer, controlBar, commentBar, commentsOpened = false;
 
+const toggleCommentsBar = (open = false) => {
+	commentsOpened = open;
+	if (commentsOpened) {
+		mainContainer.classList.add('show-comments');
+	} else {
+		mainContainer.classList.remove('show-comments');
+	}
+};
 
-	var sizeMap = {
-		desktop: {
-			width: '100%',
-			height: '100%'
-		},
-		tablet: {
-			width: '768px',
-			height: '1024px'
-		},
-		smartphone: {
-			width: '360px',
-			height: '640px'
-		}
+const handleChangePreviewSize = (ev) => {
+	const { width, height } = ev && ev.detail || {
+		width: PROPERTY.previewWidth,
+		height: PROPERTY.previewHeight,
 	};
-	var customSizes = {};
+	previewFrame.setAttribute('width', width.replace(/px/i, ''));
+	previewFrame.setAttribute('height', height.replace(/px/i, ''));
+};
 
-	var $customPanel = $('.custom-panel'),
-		$customWidthInput = $customPanel.find('.custom-width'),
-		$customHeightInput = $customPanel.find('.custom-height'),
-		$customOkBtn = $('.custom-size-btn'),
-		$previewModeSelect = $('.preview-mode-select'),
-		$langSelect = $('#preview-mode-lang'),
-		$previewFrame = $('iframe#previewFrame');
+const handleCloseComments = () => {
+	toggleCommentsBar(false);
+	controlBar.setAttribute('comments-opened', 'false');
+};
 
+const handleChangeIframeUrl = (ev) => {
+	const lang = ev && ev.detail || PROPERTY.lang;
+	var normalizedBaseUrl = PROPERTY.baseUrl.replace(/\/$/, ''),
+		previewUrl = [normalizedBaseUrl, 'preview', lang, PROPERTY.pageCode].join('/');
+	previewUrl += '?' + [ 'token='+encodeURIComponent(PROPERTY.token) ].join('&');
 
+	previewFrame.setAttribute('src', previewUrl);
+}
 
-	function updatePreviewSize() {
-		var key = $previewModeSelect.val(),
-			width, height;
+const pageReady = () => {
+	previewFrame = document.getElementById('previewFrame');
+	mainContainer = document.querySelector('.main-container');
+	controlBar = document.getElementById('controlBar');
+	commentBar = document.querySelector('preview-comments-bar');
+	controlBar.addEventListener(PreviewControlBarEvent.RESOLUTION_CHANGE, handleChangePreviewSize);
+	controlBar.addEventListener(PreviewControlBarEvent.CHANGE_LANGUAGE, handleChangeIframeUrl);
+	controlBar.addEventListener(PreviewControlBarEvent.COMMENT_TOGGLE, ({ detail }) => toggleCommentsBar(detail));
 
-		if (key === 'custom') {
-			$customWidthInput.removeAttr('disabled');
-			$customHeightInput.removeAttr('disabled');
+	commentBar.addEventListener(PreviewCommentsBarEvent.COMMENT_CLOSE, handleCloseComments);
+	handleChangeIframeUrl();
+	handleChangePreviewSize();
+}
 
-			customSizes = {
-				width: customSizes.width || $customWidthInput.val() || 100,
-				height: customSizes.height || $customHeightInput.val() || 100
-			};
-			width = customSizes.width + 'px';
-			height = customSizes.height + 'px';
-			$customWidthInput.val(customSizes.width);
-			$customHeightInput.val(customSizes.height);
-
-		} else if (key && sizeMap[key]) {
-			$customWidthInput.attr('disabled', 'disabled');
-			$customHeightInput.attr('disabled', 'disabled');
-
-			width = sizeMap[key].width;
-			height = sizeMap[key].height;
-			$customWidthInput.val(width);
-			$customHeightInput.val(height);
-		}
-		$previewFrame
-			.attr('width', width)
-			.attr('height', height);
-
-	}
-
-
-	function updateIframeUrl() {
-		var normalizedBaseUrl = PROPERTY.baseUrl.replace(/\/$/, ''),
-		previewUrl = [normalizedBaseUrl, 'preview', PROPERTY.lang, PROPERTY.pageCode].join('/');
-		previewUrl += '?' + [ 'token='+encodeURIComponent(PROPERTY.token) ].join('&');
-	
-		$previewFrame.attr('src', previewUrl);
-	}
-	
-	
-	updateIframeUrl();
-	$customWidthInput.val(PROPERTY.previewWidth);
-	$customHeightInput.val(PROPERTY.previewHeight);
-	$previewModeSelect.val('custom');
-	$langSelect.val(PROPERTY.lang);
-
-	updatePreviewSize();
-
-
-
-	$previewModeSelect.change(function () {
-		updatePreviewSize();
-	});
-	
-	$langSelect.change(function(){
-		PROPERTY.lang = $langSelect.val();
-		updateIframeUrl();
-		
-	});
-
-	$customOkBtn.click(function() {
-		updatePreviewSize();
-	});
-
-});
+document.addEventListener("DOMContentLoaded", pageReady);
