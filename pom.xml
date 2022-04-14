@@ -9,7 +9,7 @@
     </parent>
     <groupId>org.entando.entando</groupId>
     <artifactId>entando-admin-console</artifactId>
-    <version>6.3.8</version>
+    <version>6.3.8-fix.1</version>
     <packaging>war</packaging>
     <name>Entando Core: Administration Console</name>
     <description>Entando Administration Console: an agile, modern and user-centric open source Portal platform.
@@ -45,6 +45,7 @@
         <!--        <allTestsSuiteClass>com.agiletec.apsadmin.AllTests</allTestsSuiteClass>-->
         <maven-repository-id-release>nexus</maven-repository-id-release>
         <maven-repository-url-release>http://nexus/repository/maven-releases</maven-repository-url-release>
+        <freemarker.version>2.3.31</freemarker.version>
     </properties>
     <build>
         <finalName>${project.artifactId}-${project.version}</finalName>
