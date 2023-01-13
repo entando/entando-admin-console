@@ -48,6 +48,7 @@
             https://raw.githubusercontent.com/entando/entando-core-parent/v${project.parent.version}/owasp-dependency-check-suppression.xml
         </owaspSuppressionFileLocation>
         <entando-core-bom.version>7.1.2-ENG-4475</entando-core-bom.version>
+        <sonar.coverage.exclusions>**/*.js</sonar.coverage.exclusions>
     </properties>
     <build>
         <finalName>${project.artifactId}-${project.version}</finalName>
@@ -322,6 +323,14 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
