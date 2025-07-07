@@ -17,8 +17,14 @@
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
         </action>
         <action name="reloadConfig" class="baseAdminAction" method="reloadConfig">
-            <result type="tiles">admin.BaseAdmin.reloadConfigResult</result>
+            <result type="tiles">admin.BaseAdmin.reloadInProgress</result>
         	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+
+        <action name="reloadStatus" class="baseAdminAction" method="reloadStatus">
+            <result type="tiles">admin.BaseAdmin.reloadConfigResult</result>
+            <result type="tiles" name="inProgress">admin.BaseAdmin.reloadInProgress</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
         </action>
 
         <action name="reloadEntitiesReferences" class="baseAdminAction" method="reloadEntitiesReferences">

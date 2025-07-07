@@ -13,6 +13,7 @@
  */
 package com.agiletec.apsadmin.admin;
 
+import com.agiletec.apsadmin.admin.reload.ReloadConfigThread;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -47,7 +48,7 @@ public class BaseAdminAction extends BaseAction {
      * Reload the system configuration.
      *
      * @return the result code.
-     */
+     *//*
     public String reloadConfig() {
         try {
             ApsWebApplicationUtils.executeSystemRefresh(this.getRequest());
@@ -58,6 +59,29 @@ public class BaseAdminAction extends BaseAction {
             this.setReloadingResult(FAILURE_RELOADING_RESULT_CODE);
         }
         return SUCCESS;
+    }*/
+
+    public String reloadConfig() {
+        if (!ApsWebApplicationUtils.isReloadInProgress()) {
+            ReloadConfigThread rct = new ReloadConfigThread(this.getRequest());
+            logger.info("Starting reload configuration thread");
+            rct.start();
+        } else {
+            logger.info("Reload operation already in progress!");
+        }
+        return SUCCESS;
+    }
+
+    public String reloadStatus() {
+        if (ApsWebApplicationUtils.isReloadInProgress()) {
+            return "inProgress";
+        }
+        this.setReloadingResult(SUCCESS_RELOADING_RESULT_CODE);
+        return SUCCESS;
+    }
+
+    public int getReloadProgress() {
+        return ApsWebApplicationUtils.getReloadProgress();
     }
 
     /**

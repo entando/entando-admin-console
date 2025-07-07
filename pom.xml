@@ -5,11 +5,11 @@
     <parent>
         <groupId>org.entando</groupId>
         <artifactId>entando-core-parent</artifactId>
-        <version>6.5.0-ENG-5128-PR-156</version>
+        <version>6.5.0</version>
     </parent>
     <groupId>org.entando.entando</groupId>
     <artifactId>entando-admin-console</artifactId>
-    <version>6.5.2</version>
+    <version>6.5.3</version>
     <packaging>war</packaging>
     <name>Entando Core: Administration Console</name>
     <description>Entando Administration Console: an agile, modern and user-centric open source Portal platform.
@@ -88,6 +88,22 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>tests</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>tests</classifier>
+                            <classesDirectory>${project.build.test-classes}</classesDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
@@ -212,7 +228,7 @@
             <dependency>
                 <groupId>org.entando</groupId>
                 <artifactId>entando-core-bom</artifactId>
-                <version>6.5.0-ENG-5128</version>
+                <version>6.5.1</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -222,12 +238,14 @@
         <dependency>
             <groupId>org.entando.entando</groupId>
             <artifactId>entando-engine</artifactId>
+            <version>6.5.5-pre.1</version>
         </dependency>
         <dependency>
             <groupId>org.entando.entando</groupId>
             <artifactId>entando-engine</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
+            <version>6.5.5-pre.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.struts</groupId>
