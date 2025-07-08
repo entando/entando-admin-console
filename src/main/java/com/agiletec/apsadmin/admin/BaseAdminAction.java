@@ -48,19 +48,7 @@ public class BaseAdminAction extends BaseAction {
      * Reload the system configuration.
      *
      * @return the result code.
-     *//*
-    public String reloadConfig() {
-        try {
-            ApsWebApplicationUtils.executeSystemRefresh(this.getRequest());
-            logger.info("Reload config started");
-            this.setReloadingResult(SUCCESS_RELOADING_RESULT_CODE);
-        } catch (Throwable t) {
-            logger.error("error in reloadConfig", t);
-            this.setReloadingResult(FAILURE_RELOADING_RESULT_CODE);
-        }
-        return SUCCESS;
-    }*/
-
+     */
     public String reloadConfig() {
         if (!ApsWebApplicationUtils.isReloadInProgress()) {
             ReloadConfigThread rct = new ReloadConfigThread(this.getRequest());
@@ -69,11 +57,13 @@ public class BaseAdminAction extends BaseAction {
         } else {
             logger.info("Reload operation already in progress!");
         }
+        this.setReloadingResult(PROGRESS_RELOADING_RESULT_CODE);
         return SUCCESS;
     }
 
     public String reloadStatus() {
         if (ApsWebApplicationUtils.isReloadInProgress()) {
+            this.setReloadingResult(PROGRESS_RELOADING_RESULT_CODE);
             return "inProgress";
         }
         this.setReloadingResult(SUCCESS_RELOADING_RESULT_CODE);
@@ -266,5 +256,6 @@ public class BaseAdminAction extends BaseAction {
 
     public static final int FAILURE_RELOADING_RESULT_CODE = 0;
     public static final int SUCCESS_RELOADING_RESULT_CODE = 1;
+    public static final int PROGRESS_RELOADING_RESULT_CODE = 2;
 
 }

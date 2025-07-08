@@ -18,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.agiletec.aps.system.ApsSystemUtils;
+import com.agiletec.aps.util.ApsWebApplicationUtils;
 import java.util.Map;
 
 import com.agiletec.aps.system.SystemConstants;
@@ -45,6 +47,23 @@ class TestBaseAdminAction extends ApsAdminBaseTestCase {
 
         this.setUserOnSession("admin");
         this.initAction("/do/BaseAdmin", "reloadConfig");
+        result = this.executeAction();
+        assertEquals(Action.SUCCESS, result);
+        synchronized (this) {
+            this.wait(3000);
+        }
+        assertEquals(BaseAdminAction.PROGRESS_RELOADING_RESULT_CODE, ((BaseAdminAction) this.getAction()).getReloadingResult());
+    }
+
+    @Test
+    void testReloadStatus() throws Throwable {
+        this.setUserOnSession("supervisorCoach");
+        this.initAction("/do/BaseAdmin", "reloadStatus");
+        String result = this.executeAction();
+        assertEquals("userNotAllowed", result);
+
+        this.setUserOnSession("admin");
+        this.initAction("/do/BaseAdmin", "reloadStatus");
         result = this.executeAction();
         assertEquals(Action.SUCCESS, result);
         synchronized (this) {
