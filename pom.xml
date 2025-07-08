@@ -238,14 +238,14 @@
         <dependency>
             <groupId>org.entando.entando</groupId>
             <artifactId>entando-engine</artifactId>
-            <version>6.5.5-pre.1</version>
+            <version>6.5.5-ENG-5566-PR-340</version>
         </dependency>
         <dependency>
             <groupId>org.entando.entando</groupId>
             <artifactId>entando-engine</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
-            <version>6.5.5-pre.1</version>
+            <version>6.5.5-ENG-5566-PR-340</version>
         </dependency>
         <dependency>
             <groupId>org.apache.struts</groupId>
