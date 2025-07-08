@@ -73,6 +73,11 @@ class TestWidgetsViewerAction extends ApsAdminBaseTestCase {
         assertEquals(2, customWidgets.size());
         SelectItem customType = customWidgets.get(0);
         assertEquals(AbstractPortalAction.CUSTOM_WIDGETS_CODE, customType.getOptgroup());
+
+        System.out.println(">L> " + currentLang.getCode());
+        customWidgets.forEach(c -> System.out.println(">!> " + c.getKey() + ": " + c.getValue()));
+
+
         if (currentLang.getCode().equals("it")) {
             assertEquals("leftmenu", customType.getKey());
             assertEquals("Menu di navigazione verticale", customType.getValue());
