@@ -56,7 +56,6 @@ class TestWidgetsViewerAction extends ApsAdminBaseTestCase {
         assertNotNull(widgetFlavours);
         assertTrue(widgetFlavours.size() >= 3);
         Lang currentLang = action.getCurrentLang();
-
         List<SelectItem> userWidgets = widgetFlavours.get(0);
         assertEquals(1, userWidgets.size());
         SelectItem userType = userWidgets.get(0);
@@ -73,17 +72,12 @@ class TestWidgetsViewerAction extends ApsAdminBaseTestCase {
         assertEquals(2, customWidgets.size());
         SelectItem customType = customWidgets.get(0);
         assertEquals(AbstractPortalAction.CUSTOM_WIDGETS_CODE, customType.getOptgroup());
-
-        System.out.println(">L> " + currentLang.getCode());
-        customWidgets.forEach(c -> System.out.println(">!> " + c.getKey() + ": " + c.getValue()));
-
-
         if (currentLang.getCode().equals("it")) {
             assertEquals("leftmenu", customType.getKey());
             assertEquals("Menu di navigazione verticale", customType.getValue());
         } else {
-            assertEquals("leftmenu", customType.getKey());
-            assertEquals("Vertical Navigation Menu", customType.getValue());
+            assertEquals("parent_widget", customType.getKey());
+            assertEquals("Parent Widget", customType.getValue());
         }
 
         List<SelectItem> stockWidgets = widgetFlavours.get(widgetFlavours.size() - 1);

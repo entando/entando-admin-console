@@ -138,7 +138,7 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Pa
 	
 	/**
 	 * Return the current system language used in the back-end interface. If this language does not
-	 * belong to those known by the system the default language is returned. A log line will 
+	 * belong to those known by the system, the default language is returned. A log line will
 	 * report the problem.
 	 * @return The current language.
 	 */
