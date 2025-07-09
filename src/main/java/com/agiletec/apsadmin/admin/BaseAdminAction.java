@@ -13,17 +13,6 @@
  */
 package com.agiletec.apsadmin.admin;
 
-import com.agiletec.apsadmin.admin.reload.ReloadConfigThread;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.entando.entando.ent.util.EntLogging.EntLogger;
-import org.entando.entando.ent.util.EntLogging.EntLogFactory;
-import org.springframework.web.context.WebApplicationContext;
-
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.event.ReloadingEntitiesReferencesEvent;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
@@ -32,7 +21,16 @@ import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
+import com.agiletec.apsadmin.admin.reload.ReloadConfigThread;
 import com.agiletec.apsadmin.system.BaseAction;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import org.entando.entando.ent.util.EntLogging.EntLogFactory;
+import org.entando.entando.ent.util.EntLogging.EntLogger;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  * This base action implements the default actions available for the system
@@ -50,14 +48,20 @@ public class BaseAdminAction extends BaseAction {
      * @return the result code.
      */
     public String reloadConfig() {
-        if (!ApsWebApplicationUtils.isReloadInProgress()) {
-            ReloadConfigThread rct = new ReloadConfigThread(this.getRequest());
-            logger.info("Starting reload configuration thread");
-            rct.start();
-        } else {
-            logger.info("Reload operation already in progress!");
+        try {
+            if (!ApsWebApplicationUtils.isReloadInProgress()) {
+                ReloadConfigThread rct = new ReloadConfigThread(this.getRequest());
+                logger.info("Starting reload configuration thread");
+                rct.start();
+            } else {
+                logger.info("Reload operation already in progress!");
+            }
+            this.setReloadingResult(PROGRESS_RELOADING_RESULT_CODE);
+        } catch (Exception e) {
+            logger.error("unexpected error while launching system reload", e);
+            this.setReloadingResult(FAILURE_RELOADING_RESULT_CODE);
+            return "reloadError";
         }
-        this.setReloadingResult(PROGRESS_RELOADING_RESULT_CODE);
         return SUCCESS;
     }
 
@@ -101,7 +105,7 @@ public class BaseAdminAction extends BaseAction {
     }
 
     /**
-     * Get the system parameters in order to edit them.
+     * Get the system parameters to edit them.
      *
      * @return the result code.
      */
