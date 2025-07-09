@@ -20,24 +20,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
-import com.agiletec.aps.system.ApsSystemUtils;
-import com.agiletec.aps.util.ApsWebApplicationUtils;
-import java.util.ArrayList;
-import java.util.Map;
-
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
+import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.agiletec.apsadmin.ApsAdminBaseTestCase;
 import com.opensymphony.xwork2.Action;
+import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
+import org.apache.lucene.util.ThreadInterruptedException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
@@ -76,10 +73,6 @@ class TestBaseAdminAction extends ApsAdminBaseTestCase {
                     .thenCallRealMethod();
             mockAWAU.when(() -> ApsWebApplicationUtils.getResources(anyString(), any(PageContext.class)))
                     .thenCallRealMethod();
-            mockAWAU.when(() -> ApsWebApplicationUtils.getService(anyString(), any(HttpServletRequest.class)))
-                    .thenCallRealMethod();
-            mockAWAU.when(() -> ApsWebApplicationUtils.getService(anyString(), any(PageContext.class)))
-                    .thenCallRealMethod();
             mockAWAU.when(() -> ApsWebApplicationUtils.getBean(anyString(), any(HttpServletRequest.class)))
                     .thenCallRealMethod();
             mockAWAU.when(() -> ApsWebApplicationUtils.getBean(anyString(), any(PageContext.class)))
@@ -102,6 +95,51 @@ class TestBaseAdminAction extends ApsAdminBaseTestCase {
     }
 
     @Test
+    void testReloadConfigurationThreadError() throws Throwable {
+        try (MockedStatic<ApsWebApplicationUtils> mockAWAU = Mockito.mockStatic(ApsWebApplicationUtils.class)) {
+            mockAWAU.when(ApsWebApplicationUtils::isReloadInProgress).thenReturn(false);
+            mockAWAU.when(ApsWebApplicationUtils::getReloadProgress).thenReturn(0);
+
+            mockAWAU.when(() -> ApsWebApplicationUtils.getResources(anyString(), any(ServletContext.class)))
+                    .thenCallRealMethod();
+            mockAWAU.when(() -> ApsWebApplicationUtils.getResources(anyString(), any(PageContext.class)))
+                    .thenCallRealMethod();
+            mockAWAU.when(() -> ApsWebApplicationUtils.getBean(anyString(), any(HttpServletRequest.class)))
+                    .thenCallRealMethod();
+            mockAWAU.when(() -> ApsWebApplicationUtils.getBean(anyString(), any(PageContext.class)))
+                    .thenCallRealMethod();
+            mockAWAU.when(() -> ApsWebApplicationUtils.getWebApplicationContext(any(HttpServletRequest.class)))
+                    .thenReturn(WebApplicationContextUtils.getWebApplicationContext(
+                            this.getRequest().getSession().getServletContext()));
+            mockAWAU.when(() -> ApsWebApplicationUtils.executeSystemRefresh(any(HttpServletRequest.class)))
+                    .thenThrow(new ThreadInterruptedException(new InterruptedException("Interrupted for testing!")));
+            mockAWAU.when(() -> ApsWebApplicationUtils.executeSystemRefresh(any(ServletContext.class)))
+                    .thenThrow(new ThreadInterruptedException(new InterruptedException("Interrupted for testing!")));
+            this.setUserOnSession("admin");
+            this.initAction("/do/BaseAdmin", "reloadConfig");
+            String result = this.executeAction();
+            assertEquals(Action.SUCCESS, result);
+
+            assertEquals(BaseAdminAction.PROGRESS_RELOADING_RESULT_CODE,
+                    ((BaseAdminAction) this.getAction()).getReloadingResult());
+
+
+            mockAWAU.when(() -> ApsWebApplicationUtils.executeSystemRefresh(any(HttpServletRequest.class)))
+                    .thenThrow(new RuntimeException("Exception needed for testing"));
+            mockAWAU.when(() -> ApsWebApplicationUtils.executeSystemRefresh(any(ServletContext.class)))
+                    .thenThrow(new RuntimeException("Exception needed for testing"));
+
+            this.setUserOnSession("admin");
+            this.initAction("/do/BaseAdmin", "reloadConfig");
+            result = this.executeAction();
+            assertEquals(Action.SUCCESS, result);
+
+            assertEquals(BaseAdminAction.PROGRESS_RELOADING_RESULT_CODE,
+                    ((BaseAdminAction) this.getAction()).getReloadingResult());
+        }
+    }
+
+    @Test
     void testDoubleReload() throws Throwable {
         try (MockedStatic<ApsWebApplicationUtils> mockAWAU = Mockito.mockStatic(ApsWebApplicationUtils.class)) {
             mockAWAU.when(ApsWebApplicationUtils::isReloadInProgress).thenReturn(true);
@@ -109,8 +147,6 @@ class TestBaseAdminAction extends ApsAdminBaseTestCase {
 
             mockAWAU.when(() -> ApsWebApplicationUtils.getResources(anyString(), any(ServletContext.class))).thenCallRealMethod();
             mockAWAU.when(() -> ApsWebApplicationUtils.getResources(anyString(), any(PageContext.class))).thenCallRealMethod();
-            mockAWAU.when(() -> ApsWebApplicationUtils.getService(anyString(), any(HttpServletRequest.class))).thenCallRealMethod();
-            mockAWAU.when(() -> ApsWebApplicationUtils.getService(anyString(), any(PageContext.class))).thenCallRealMethod();
             mockAWAU.when(() -> ApsWebApplicationUtils.getBean(anyString(), any(HttpServletRequest.class))).thenCallRealMethod();
             mockAWAU.when(() -> ApsWebApplicationUtils.getBean(anyString(), any(PageContext.class))).thenCallRealMethod();
             mockAWAU.when(() -> ApsWebApplicationUtils.getWebApplicationContext(any(HttpServletRequest.class)))
@@ -135,8 +171,6 @@ class TestBaseAdminAction extends ApsAdminBaseTestCase {
 
             mockAWAU.when(() -> ApsWebApplicationUtils.getResources(anyString(), any(ServletContext.class))).thenCallRealMethod();
             mockAWAU.when(() -> ApsWebApplicationUtils.getResources(anyString(), any(PageContext.class))).thenCallRealMethod();
-            mockAWAU.when(() -> ApsWebApplicationUtils.getService(anyString(), any(HttpServletRequest.class))).thenCallRealMethod();
-            mockAWAU.when(() -> ApsWebApplicationUtils.getService(anyString(), any(PageContext.class))).thenCallRealMethod();
             mockAWAU.when(() -> ApsWebApplicationUtils.getBean(anyString(), any(HttpServletRequest.class))).thenCallRealMethod();
             mockAWAU.when(() -> ApsWebApplicationUtils.getBean(anyString(), any(PageContext.class))).thenCallRealMethod();
             mockAWAU.when(() -> ApsWebApplicationUtils.getWebApplicationContext(any(HttpServletRequest.class)))
@@ -153,6 +187,7 @@ class TestBaseAdminAction extends ApsAdminBaseTestCase {
         }
     }
 
+    @Test
     void testReloadStatusCompleted() throws Throwable {
         try (MockedStatic<ApsWebApplicationUtils> mockAWAU = Mockito.mockStatic(ApsWebApplicationUtils.class)) {
             mockAWAU.when(ApsWebApplicationUtils::isReloadInProgress).thenReturn(false);
@@ -160,8 +195,6 @@ class TestBaseAdminAction extends ApsAdminBaseTestCase {
 
             mockAWAU.when(() -> ApsWebApplicationUtils.getResources(anyString(), any(ServletContext.class))).thenCallRealMethod();
             mockAWAU.when(() -> ApsWebApplicationUtils.getResources(anyString(), any(PageContext.class))).thenCallRealMethod();
-            mockAWAU.when(() -> ApsWebApplicationUtils.getService(anyString(), any(HttpServletRequest.class))).thenCallRealMethod();
-            mockAWAU.when(() -> ApsWebApplicationUtils.getService(anyString(), any(PageContext.class))).thenCallRealMethod();
             mockAWAU.when(() -> ApsWebApplicationUtils.getBean(anyString(), any(HttpServletRequest.class))).thenCallRealMethod();
             mockAWAU.when(() -> ApsWebApplicationUtils.getBean(anyString(), any(PageContext.class))).thenCallRealMethod();
             mockAWAU.when(() -> ApsWebApplicationUtils.getWebApplicationContext(any(HttpServletRequest.class)))
@@ -270,12 +303,12 @@ class TestBaseAdminAction extends ApsAdminBaseTestCase {
     }
 
     @AfterEach
-    protected void destroy() throws Exception {
+    void destroy() throws Exception {
         this.configManager.updateConfigItem(SystemConstants.CONFIG_ITEM_PARAMS, this.oldConfigParam);
     }
 
     @BeforeEach
-    private void init() {
+    void init() {
         this.configManager = (ConfigInterface) this.getService(SystemConstants.BASE_CONFIG_MANAGER);
         this.oldConfigParam = this.configManager.getConfigItem(SystemConstants.CONFIG_ITEM_PARAMS);
     }

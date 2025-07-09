@@ -30,7 +30,6 @@ import com.opensymphony.xwork2.ActionProxyFactory;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.inject.Container;
 import com.opensymphony.xwork2.inject.ContainerBuilder;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,7 +40,6 @@ import java.util.Map;
 import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.Dispatcher;
 import org.apache.struts2.dispatcher.HttpParameters;
@@ -172,7 +170,7 @@ public class ApsAdminBaseTestCase {
         this.proxy.setExecuteResult(false);
         // by default, don't pass in any request parameters
 
-        // set the actions context to the one which the proxy is using
+        // set the action context to the one that the proxy is using
         this.proxy.getInvocation().getInvocationContext().setSession(new HashMap<>());
         ServletActionContext.setContext(this.proxy.getInvocation().getInvocationContext());
         ServletActionContext.setRequest(this.request);
@@ -185,7 +183,7 @@ public class ApsAdminBaseTestCase {
         ServletActionContext.setServletContext(servletContext);
         this.action = (ActionSupport) this.proxy.getAction();
 
-        //reset previsious params
+        //reset previous params
         List<String> paramNames = new ArrayList<String>(this.request.getParameterMap().keySet());
         for (int i = 0; i < paramNames.size(); i++) {
             String paramName = (String) paramNames.get(i);
