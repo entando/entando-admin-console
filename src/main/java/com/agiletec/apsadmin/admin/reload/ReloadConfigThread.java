@@ -9,7 +9,7 @@ public class ReloadConfigThread extends Thread {
 
     public static final String RELOAD_THREAD = "RELOAD THREAD";
 
-    private Logger log = EntLogFactory.getSanitizedLogger(ReloadConfigThread.class);
+    private final Logger log = EntLogFactory.getSanitizedLogger(ReloadConfigThread.class);
     private final HttpServletRequest request;
 
     public ReloadConfigThread(final HttpServletRequest request) {

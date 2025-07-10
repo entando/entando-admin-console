@@ -120,19 +120,18 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Pa
 				}
 			}
 		}
-		Collections.sort(this._actualAllowedGroups, new BeanComparator("description"));
+		this._actualAllowedGroups.sort(new BeanComparator<>("description"));
 		return this._actualAllowedGroups;
 	}
 	
 	protected List<String> getActualAllowedGroupCodes() {
 		List<String> codes = new ArrayList<>();
 		List<Group> groups = this.getActualAllowedGroups();
-		for (int i = 0; i < groups.size(); i++) {
-			Group group = groups.get(i);
-			if (null != group && !codes.contains(group.getName())) {
-				codes.add(group.getName());
-			}
-		}
+        for (Group group : groups) {
+            if (null != group && !codes.contains(group.getName())) {
+                codes.add(group.getName());
+            }
+        }
 		return codes;
 	}
 	
