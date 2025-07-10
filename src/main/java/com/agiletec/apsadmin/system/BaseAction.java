@@ -57,7 +57,7 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Pa
 	
 	/**
 	 * Check if the current user has the given permission granted. It always returns true if the 
-	 * user has the the "superuser" permission set in some role.
+	 * user has the "superuser" permission set in some role.
 	 * @param permissionName The name of the permission to check against the current user.
 	 * @return true if the user has the permission granted, false otherwise.
 	 */

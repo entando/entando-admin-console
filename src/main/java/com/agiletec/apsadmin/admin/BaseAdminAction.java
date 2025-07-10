@@ -13,6 +13,8 @@
  */
 package com.agiletec.apsadmin.admin;
 
+import static com.agiletec.apsadmin.admin.reload.ReloadConfigThread.RELOAD_THREAD;
+
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.event.ReloadingEntitiesReferencesEvent;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
@@ -25,9 +27,11 @@ import com.agiletec.apsadmin.admin.reload.ReloadConfigThread;
 import com.agiletec.apsadmin.system.BaseAction;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.ent.util.EntLogging.EntLogFactory;
 import org.entando.entando.ent.util.EntLogging.EntLogger;
 import org.springframework.web.context.WebApplicationContext;
@@ -70,12 +74,29 @@ public class BaseAdminAction extends BaseAction {
             this.setReloadingResult(PROGRESS_RELOADING_RESULT_CODE);
             return "inProgress";
         }
-        this.setReloadingResult(SUCCESS_RELOADING_RESULT_CODE);
+        if (ApsWebApplicationUtils.getReloadInfo().containsKey(RELOAD_THREAD)) {
+            this.setReloadingResult(FAILURE_RELOADING_RESULT_CODE);
+        } else if (isReloadingErrorDetect()) {
+            this.setReloadingResult(WARNING_RELOADING_RESULT_CODE);
+        } else {
+            this.setReloadingResult(SUCCESS_RELOADING_RESULT_CODE);
+        }
         return SUCCESS;
+    }
+
+    public boolean isReloadingErrorDetect() {
+        return ApsWebApplicationUtils.getReloadInfo()
+                .values()
+                .stream()
+                .anyMatch(StringUtils::isNotBlank);
     }
 
     public int getReloadProgress() {
         return ApsWebApplicationUtils.getReloadProgress();
+    }
+
+    public Map<String, String> getReloadInfo() {
+        return new HashMap<>(ApsWebApplicationUtils.getReloadInfo());
     }
 
     /**
@@ -162,7 +183,7 @@ public class BaseAdminAction extends BaseAction {
      * Refresh the map of parameters with values fetched from the request
      *
      * @param keepOldParam when true, when a system parameter is not found in
-     * request, the previous system parameter will be stored
+     *  the request, the previous system parameter will be stored
      */
     protected void updateLocalParams(boolean keepOldParam) {
         Iterator<String> paramNames = this.getSystemParams().keySet().iterator();
@@ -258,8 +279,10 @@ public class BaseAdminAction extends BaseAction {
 
     private int _reloadingResult = -1;
 
+
     public static final int FAILURE_RELOADING_RESULT_CODE = 0;
     public static final int SUCCESS_RELOADING_RESULT_CODE = 1;
     public static final int PROGRESS_RELOADING_RESULT_CODE = 2;
+    public static final int WARNING_RELOADING_RESULT_CODE = 3;
 
 }
