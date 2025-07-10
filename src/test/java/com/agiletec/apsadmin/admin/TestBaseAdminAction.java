@@ -18,28 +18,25 @@ import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
-import com.agiletec.aps.system.ApsSystemUtils;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.agiletec.apsadmin.ApsAdminBaseTestCase;
-import com.agiletec.apsadmin.category.CategoryAction;
-import com.agiletec.apsadmin.system.BaseAction;
 import com.opensymphony.xwork2.Action;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.util.ThreadInterruptedException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -169,18 +166,23 @@ class TestBaseAdminAction extends ApsAdminBaseTestCase {
                     .thenReturn(WebApplicationContextUtils.getWebApplicationContext(this.getRequest().getSession().getServletContext()));
             mockAWAU.when(() -> ApsWebApplicationUtils.executeSystemRefresh(any(HttpServletRequest.class))).thenCallRealMethod();
             mockAWAU.when(() -> ApsWebApplicationUtils.executeSystemRefresh(any(ServletContext.class))).thenCallRealMethod();
+            mockAWAU.when(ApsWebApplicationUtils::getReloadInfo).thenReturn(mockTestResultOk());
 
-            this.setUserOnSession("admin");
+                    this.setUserOnSession("admin");
             this.initAction("/do/BaseAdmin", "reloadStatus");
             String result = this.executeAction();
             assertEquals(Action.SUCCESS, result);
-
+            assertFalse(((BaseAdminAction) this.getAction()).isReloadingErrorDetect());
+            assertEquals(mockTestResultOk(), ((BaseAdminAction) this.getAction()).getReloadInfo());
+            assertNotSame(mockTestResultOk(), ((BaseAdminAction) this.getAction()).getReloadInfo());
             assertEquals(BaseAdminAction.SUCCESS_RELOADING_RESULT_CODE, ((BaseAdminAction) this.getAction()).getReloadingResult());
         }
     }
 
     @Test
-    void testReloadStatus() throws Throwable {
+    void testReloadStatusSuccess() throws Throwable {
+        assertFalse(ApsWebApplicationUtils.isReloadInProgress());
+
         this.setUserOnSession("supervisorCoach");
         this.initAction("/do/BaseAdmin", "reloadStatus");
         String result = this.executeAction();
@@ -190,10 +192,57 @@ class TestBaseAdminAction extends ApsAdminBaseTestCase {
         this.initAction("/do/BaseAdmin", "reloadStatus");
         result = this.executeAction();
         assertEquals(Action.SUCCESS, result);
-        synchronized (this) {
-            this.wait(3000);
-        }
         assertEquals(BaseAdminAction.SUCCESS_RELOADING_RESULT_CODE, ((BaseAdminAction) this.getAction()).getReloadingResult());
+    }
+
+    @Test
+    void testReloadStatusCompletedWithWarning() throws Throwable {
+        try (MockedStatic<ApsWebApplicationUtils> mockAWAU = Mockito.mockStatic(ApsWebApplicationUtils.class)) {
+            mockAWAU.when(ApsWebApplicationUtils::isReloadInProgress).thenCallRealMethod();
+            mockAWAU.when(ApsWebApplicationUtils::getReloadProgress).thenCallRealMethod();
+
+            mockAWAU.when(() -> ApsWebApplicationUtils.getResources(anyString(), any(ServletContext.class))).thenCallRealMethod();
+            mockAWAU.when(() -> ApsWebApplicationUtils.getResources(anyString(), any(PageContext.class))).thenCallRealMethod();
+            mockAWAU.when(() -> ApsWebApplicationUtils.getBean(anyString(), any(HttpServletRequest.class))).thenCallRealMethod();
+            mockAWAU.when(() -> ApsWebApplicationUtils.getBean(anyString(), any(PageContext.class))).thenCallRealMethod();
+            mockAWAU.when(() -> ApsWebApplicationUtils.getWebApplicationContext(any(HttpServletRequest.class)))
+                    .thenReturn(WebApplicationContextUtils.getWebApplicationContext(this.getRequest().getSession().getServletContext()));
+            mockAWAU.when(() -> ApsWebApplicationUtils.executeSystemRefresh(any(HttpServletRequest.class))).thenCallRealMethod();
+            mockAWAU.when(() -> ApsWebApplicationUtils.executeSystemRefresh(any(ServletContext.class))).thenCallRealMethod();
+            mockAWAU.when(ApsWebApplicationUtils::getReloadInfo).thenReturn(mockTestResultWarning());
+
+            this.setUserOnSession("admin");
+            this.initAction("/do/BaseAdmin", "reloadStatus");
+            String result = this.executeAction();
+            assertEquals(Action.SUCCESS, result);
+            assertTrue(((BaseAdminAction) this.getAction()).isReloadingErrorDetect());
+            assertEquals(BaseAdminAction.WARNING_RELOADING_RESULT_CODE, ((BaseAdminAction) this.getAction()).getReloadingResult());
+        }
+    }
+
+    @Test
+    void testReloadStatusWithThreadError() throws Throwable {
+        try (MockedStatic<ApsWebApplicationUtils> mockAWAU = Mockito.mockStatic(ApsWebApplicationUtils.class)) {
+            mockAWAU.when(ApsWebApplicationUtils::isReloadInProgress).thenCallRealMethod();
+            mockAWAU.when(ApsWebApplicationUtils::getReloadProgress).thenCallRealMethod();
+
+            mockAWAU.when(() -> ApsWebApplicationUtils.getResources(anyString(), any(ServletContext.class))).thenCallRealMethod();
+            mockAWAU.when(() -> ApsWebApplicationUtils.getResources(anyString(), any(PageContext.class))).thenCallRealMethod();
+            mockAWAU.when(() -> ApsWebApplicationUtils.getBean(anyString(), any(HttpServletRequest.class))).thenCallRealMethod();
+            mockAWAU.when(() -> ApsWebApplicationUtils.getBean(anyString(), any(PageContext.class))).thenCallRealMethod();
+            mockAWAU.when(() -> ApsWebApplicationUtils.getWebApplicationContext(any(HttpServletRequest.class)))
+                    .thenReturn(WebApplicationContextUtils.getWebApplicationContext(this.getRequest().getSession().getServletContext()));
+            mockAWAU.when(() -> ApsWebApplicationUtils.executeSystemRefresh(any(HttpServletRequest.class))).thenCallRealMethod();
+            mockAWAU.when(() -> ApsWebApplicationUtils.executeSystemRefresh(any(ServletContext.class))).thenCallRealMethod();
+            mockAWAU.when(ApsWebApplicationUtils::getReloadInfo).thenReturn(mockTestResultThreadError());
+
+            this.setUserOnSession("admin");
+            this.initAction("/do/BaseAdmin", "reloadStatus");
+            String result = this.executeAction();
+            assertEquals(Action.SUCCESS, result);
+            assertTrue(((BaseAdminAction) this.getAction()).isReloadingErrorDetect());
+            assertEquals(BaseAdminAction.FAILURE_RELOADING_RESULT_CODE, ((BaseAdminAction) this.getAction()).getReloadingResult());
+        }
     }
 
     @Test
@@ -270,6 +319,18 @@ class TestBaseAdminAction extends ApsAdminBaseTestCase {
         assertEquals("parameterValue", this.configManager.getParam("newCustomParameter"));
     }
 
+    @AfterEach
+    void destroy() throws Exception {
+        this.configManager.updateConfigItem(SystemConstants.CONFIG_ITEM_PARAMS, this.oldConfigParam);
+    }
+
+    @BeforeEach
+    void init() {
+        this.configManager = (ConfigInterface) this.getService(SystemConstants.BASE_CONFIG_MANAGER);
+        this.oldConfigParam = this.configManager.getConfigItem(SystemConstants.CONFIG_ITEM_PARAMS);
+    }
+
+
     private boolean isReloadThreadError() {
         return ApsWebApplicationUtils.getReloadInfo().containsKey(RELOAD_THREAD);
     }
@@ -286,15 +347,23 @@ class TestBaseAdminAction extends ApsAdminBaseTestCase {
         assertFalse(hasReloadError());
     }
 
-    @AfterEach
-    void destroy() throws Exception {
-        this.configManager.updateConfigItem(SystemConstants.CONFIG_ITEM_PARAMS, this.oldConfigParam);
+    private Map<String, String> mockTestResultOk() {
+        Map<String, String> map = new HashMap<>();
+        map.put("jacmsSearchEngineManager", "");
+        map.put("jacmsResourceManager", "");
+        map.put("UserProfileManager", "");
+        return map;
     }
 
-    @BeforeEach
-    void init() {
-        this.configManager = (ConfigInterface) this.getService(SystemConstants.BASE_CONFIG_MANAGER);
-        this.oldConfigParam = this.configManager.getConfigItem(SystemConstants.CONFIG_ITEM_PARAMS);
+    private Map<String, String> mockTestResultWarning() {
+        Map<String, String> map = new HashMap<>(mockTestResultOk());
+        map.put("myService", "error message");
+        return map;
     }
 
+    private Map<String, String> mockTestResultThreadError() {
+        Map<String, String> map = new HashMap<>(mockTestResultOk());
+        map.put(RELOAD_THREAD, "thread error message");
+        return map;
+    }
 }
