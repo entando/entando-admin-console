@@ -14,13 +14,11 @@
 package com.agiletec.apsadmin.admin;
 
 import static com.agiletec.apsadmin.admin.reload.ReloadConfigThread.RELOAD_THREAD;
-import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -63,9 +61,6 @@ class TestBaseAdminAction extends ApsAdminBaseTestCase {
         this.initAction("/do/BaseAdmin", "reloadConfig");
         result = this.executeAction();
         assertEquals(Action.SUCCESS, result);
-        while (ApsWebApplicationUtils.isReloadInProgress()) {
-            Thread.sleep(250);
-        }
         assertEquals(BaseAdminAction.PROGRESS_RELOADING_RESULT_CODE, ((BaseAdminAction) this.getAction()).getReloadingResult());
         verifySuccessfulReload();
     }
