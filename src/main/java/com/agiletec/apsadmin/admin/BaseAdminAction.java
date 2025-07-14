@@ -74,13 +74,11 @@ public class BaseAdminAction extends BaseAction {
             this.setReloadingResult(PROGRESS_RELOADING_RESULT_CODE);
             return "inProgress";
         }
-        if (ApsWebApplicationUtils.getReloadInfo().containsKey(RELOAD_THREAD)) {
-            this.setReloadingResult(FAILURE_RELOADING_RESULT_CODE);
-        } else if (isReloadingErrorDetect()) {
-            this.setReloadingResult(WARNING_RELOADING_RESULT_CODE);
-        } else {
-            this.setReloadingResult(SUCCESS_RELOADING_RESULT_CODE);
-        }
+        updateReloadStatusResult();
+        return SUCCESS;
+    }
+
+    public String reloadStatusJson() {
         return SUCCESS;
     }
 
@@ -244,6 +242,16 @@ public class BaseAdminAction extends BaseAction {
         }
     }
 
+    protected void updateReloadStatusResult() {
+        if (ApsWebApplicationUtils.getReloadInfo().containsKey(RELOAD_THREAD)) {
+            this.setReloadingResult(FAILURE_RELOADING_RESULT_CODE);
+        } else if (isReloadingErrorDetect()) {
+            this.setReloadingResult(WARNING_RELOADING_RESULT_CODE);
+        } else {
+            this.setReloadingResult(SUCCESS_RELOADING_RESULT_CODE);
+        }
+    }
+
     protected ConfigInterface getConfigManager() {
         return _configManager;
     }
@@ -278,7 +286,6 @@ public class BaseAdminAction extends BaseAction {
     private Map<String, String> _systemParams;
 
     private int _reloadingResult = -1;
-
 
     public static final int FAILURE_RELOADING_RESULT_CODE = 0;
     public static final int SUCCESS_RELOADING_RESULT_CODE = 1;

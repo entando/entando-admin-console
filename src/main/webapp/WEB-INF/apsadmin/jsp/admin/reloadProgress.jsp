@@ -15,23 +15,41 @@
                 <s:text name="label.reload.check" />
             </a>
         </div>
-    <div>
-        <h3><s:text name="label.reload.progress"/>:&nbsp;<b><s:property value="%{getReloadProgress()}"/>%</b></h3>
-    </div>
+        <div>
+            <h3 id="show-reload-progress">
+                <s:text name="label.reload.progress"/>:&nbsp;
+                <b><s:property value="%{getReloadProgress()}"/>%</b>
+            </h3>
+        </div>
 
     </wp:ifauthorized>
 </div>
 
 <script>
-  window.addEventListener('DOMContentLoaded', function () {
-    const reloadLink = document.getElementById('link-reload-action');
+  $(document).ready(function () {
+    let reloadUrl = "<s:url namespace='/do/BaseAdmin' action='reloadStatusJson' />";
 
-    if (reloadLink) {
-      setInterval(function () {
-        reloadLink.click();
-      }, 2000);
-    } else {
-      console.warn('Il link con ID "link-reload-action" non è stato trovato.');
+    function refreshProgress() {
+      $.getJSON(reloadUrl, function (data) {
+        let progress = parseInt(data, 10);
+
+        if (!isNaN(progress)) {
+          if (progress === -1) {
+            $('#show-reload-progress b').text('100%');
+            window.location.href = $('#link-reload-action').attr('href');
+          } else {
+            $('#show-reload-progress b').text(progress + '%');
+          }
+        } else {
+          console.warn('NaN, leaving...');
+          window.location.href = $('#link-reload-action').attr('href');
+        }
+      }).fail(function (jqxhr, textStatus, error) {
+        console.error('AJAX error:', textStatus, error);
+      });
     }
+
+    refreshProgress();
+    setInterval(refreshProgress, 2000);
   });
 </script>

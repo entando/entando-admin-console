@@ -241,6 +241,17 @@ class TestBaseAdminAction extends ApsAdminBaseTestCase {
     }
 
     @Test
+    void testAjaxCall() throws Throwable {
+        assertFalse(ApsWebApplicationUtils.isReloadInProgress());
+        this.setUserOnSession("admin");
+        this.initAction("/do/BaseAdmin", "reloadStatus");
+        String result = this.executeAction();
+        assertEquals(Action.SUCCESS, result);
+        final int progress = ((BaseAdminAction)this.getAction()).getReloadProgress();
+        assertEquals(-1, progress);
+    }
+
+    @Test
     void testReloadEntitiesReferences() throws Throwable {
         this.setUserOnSession("supervisorCoach");
         this.initAction("/do/BaseAdmin", "reloadEntitiesReferences");
