@@ -11,7 +11,7 @@
             <s:text name="label.reload.message.check"/>
         </p>
         <div class="btn button-fixed-width">
-            <a href="<s:url namespace="/do/BaseAdmin" action="reloadStatus" />" class="btn-primary button-fixed-width">
+            <a id="link-reload-action" href="<s:url namespace="/do/BaseAdmin" action="reloadStatus" />" class="btn-primary button-fixed-width">
                 <s:text name="label.reload.check" />
             </a>
         </div>
@@ -21,3 +21,17 @@
 
     </wp:ifauthorized>
 </div>
+
+<script>
+  window.addEventListener('DOMContentLoaded', function () {
+    const reloadLink = document.getElementById('link-reload-action');
+
+    if (reloadLink) {
+      setInterval(function () {
+        reloadLink.click();
+      }, 2000);
+    } else {
+      console.warn('Il link con ID "link-reload-action" non è stato trovato.');
+    }
+  });
+</script>
