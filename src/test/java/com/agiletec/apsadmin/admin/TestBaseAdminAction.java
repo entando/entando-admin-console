@@ -244,7 +244,7 @@ class TestBaseAdminAction extends ApsAdminBaseTestCase {
     void testAjaxCall() throws Throwable {
         assertFalse(ApsWebApplicationUtils.isReloadInProgress());
         this.setUserOnSession("admin");
-        this.initAction("/do/BaseAdmin", "reloadStatus");
+        this.initAction("/do/BaseAdmin", "reloadStatusJson");
         String result = this.executeAction();
         assertEquals(Action.SUCCESS, result);
         final int progress = ((BaseAdminAction)this.getAction()).getReloadProgress();
