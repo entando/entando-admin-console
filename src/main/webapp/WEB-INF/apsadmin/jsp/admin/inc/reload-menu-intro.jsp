@@ -16,11 +16,12 @@
     <div>
         <s:text name="menu.reload.config" />
         <span class="pull-right">
-            <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
-               data-content="<s:text name="page.reloadConfig.help" />" data-placement="left" data-original-title=""
-               onKeyDown="if(event.key === ' ' || event.key === 'Enter'){ event.preventDefault(); this.click(); }" >
-                <i class="fa fa-question-circle-o" aria-hidden="true"></i>
-            </a>
+            <button type="button" class="btn btn-link" data-toggle="popover" data-trigger="focus" data-html="true"
+                    title=""
+                    data-content="<s:text name='page.reloadConfig.help' />"
+                    data-placement="left" data-original-title="">
+                <i class="fa fa-question-circle-o fa-2x" aria-hidden="true"></i>
+            </button>
         </span>
     </div>
 </h1>
