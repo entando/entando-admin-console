@@ -3,6 +3,15 @@
 
 <s:include value="/WEB-INF/apsadmin/jsp/admin/inc/reload-menu-intro.jsp" />
 
+<div>
+    <div class="col-12 alert alert-warning margin-large-top text-left">
+        <span class="pficon pficon-warning-triangle-o"></span>
+        <strong><s:text name="messages.warning" /></strong>: <s:text name="reload.legend.info" />
+    </div>
+</div>
+
+<br/>
+
 <s:if test="1 == reloadingResult || 3 == reloadingResult">
 
     <s:if test="1 == reloadingResult">
@@ -19,7 +28,6 @@
             <s:text name="message.reloadConfig.warning" />.
         </div>
     </s:else>
-
     <table class="table table-bordered table-striped table-hover table-condensed">
         <thead>
         <tr>
