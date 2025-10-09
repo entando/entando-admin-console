@@ -188,11 +188,9 @@ public class BaseAdminAction extends BaseAction {
      *  the request, the previous system parameter will be stored
      */
     protected void updateLocalParams(boolean keepOldParam) {
-        Iterator<String> paramNames = this.getSystemParams().keySet().iterator();
-        while (paramNames.hasNext()) {
-            String paramName = (String) paramNames.next();
+        for (String paramName : this.getSystemParams().keySet()) {
             String newValue = this.getRequest().getParameter(paramName);
-            if (null != newValue) {
+            if (StringUtils.isNotBlank(newValue)) {
                 this.getSystemParams().put(paramName, newValue);
             } else if (!keepOldParam) {
                 this.getSystemParams().put(paramName, "false");
@@ -240,8 +238,8 @@ public class BaseAdminAction extends BaseAction {
             pages.add(page);
         }
         String[] children = page.getChildrenCodes();
-        for (int i = 0; i < children.length; i++) {
-            IPage child = this.getPageManager().getOnlinePage(children[i]);
+        for (String s : children) {
+            IPage child = this.getPageManager().getOnlinePage(s);
             this.addFreePublicPages(child, pages);
         }
     }
