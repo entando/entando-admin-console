@@ -46,6 +46,10 @@ public class BaseAdminAction extends BaseAction {
 
     private static final EntLogger logger = EntLogFactory.getSanitizedLogger(BaseAdminAction.class);
 
+    public static final String RELOAD_ERROR = "reloadError";
+    public static final String IN_PROGRESS = "inProgress";
+    public static final String NEW_PARAM_MARKER = "_newParamMarker";
+
     /**
      * Reload the system configuration.
      *
@@ -64,7 +68,7 @@ public class BaseAdminAction extends BaseAction {
         } catch (Exception e) {
             logger.error("unexpected error while launching system reload", e);
             this.setReloadingResult(FAILURE_RELOADING_RESULT_CODE);
-            return "reloadError";
+            return RELOAD_ERROR;
         }
         return SUCCESS;
     }
@@ -72,7 +76,7 @@ public class BaseAdminAction extends BaseAction {
     public String reloadStatus() {
         if (ApsWebApplicationUtils.isReloadInProgress()) {
             this.setReloadingResult(PROGRESS_RELOADING_RESULT_CODE);
-            return "inProgress";
+            return IN_PROGRESS;
         }
         updateReloadStatusResult();
         return SUCCESS;
@@ -277,7 +281,7 @@ public class BaseAdminAction extends BaseAction {
     }
 
     public String getExternalParamMarker() {
-        return "_newParamMarker";
+        return NEW_PARAM_MARKER;
     }
 
     private ConfigInterface _configManager;
