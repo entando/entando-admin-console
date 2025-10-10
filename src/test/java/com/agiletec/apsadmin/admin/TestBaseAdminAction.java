@@ -327,7 +327,12 @@ class TestBaseAdminAction extends ApsAdminBaseTestCase {
 
     @AfterEach
     void destroy() throws Exception {
-        this.configManager.updateConfigItem(SystemConstants.CONFIG_ITEM_PARAMS, this.oldConfigParam);
+        try {
+            this.configManager.updateConfigItem(SystemConstants.CONFIG_ITEM_PARAMS, this.oldConfigParam);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @BeforeEach
